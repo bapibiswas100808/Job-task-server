@@ -41,14 +41,19 @@ async function run() {
     app.get("/allProducts", async (req, res) => {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
+      const searchTerm = req.query.search || "";
 
       const skip = (page - 1) * limit;
-      const allProducts = await ProductCollections.find()
+      const filter = searchTerm
+        ? { ProductName: { $regex: searchTerm, $options: "i" } }
+        : {};
+
+      const allProducts = await ProductCollections.find(filter)
         .skip(skip)
         .limit(limit)
         .toArray();
 
-      const totalProducts = await ProductCollections.countDocuments();
+      const totalProducts = await ProductCollections.countDocuments(filter);
 
       res.send({
         data: allProducts,
