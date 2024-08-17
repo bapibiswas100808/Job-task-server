@@ -44,6 +44,7 @@ async function run() {
       const searchTerm = req.query.search || "";
       const brand = req.query.brand || "";
       const category = req.query.category || "";
+      const priceRange = req.query.priceRange || "";
 
       const skip = (page - 1) * limit;
       let filter = {};
@@ -58,7 +59,13 @@ async function run() {
       if (category) {
         filter.Category = category;
       }
-
+      if (priceRange) {
+        const [minPrice, maxPrice] = priceRange.split("-");
+        filter.Price = {
+          $gte: parseFloat(minPrice),
+          $lte: parseFloat(maxPrice),
+        };
+      }
       const allProducts = await ProductCollections.find(filter)
         .skip(skip)
         .limit(limit)
