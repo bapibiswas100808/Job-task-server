@@ -37,7 +37,7 @@ async function run() {
       res.send({ token });
     });
 
-    // Get All Product
+    // Get All Product with search
     app.get("/allProducts", async (req, res) => {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
