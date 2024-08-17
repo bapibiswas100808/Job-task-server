@@ -43,6 +43,7 @@ async function run() {
       const limit = parseInt(req.query.limit) || 10;
       const searchTerm = req.query.search || "";
       const brand = req.query.brand || "";
+      const category = req.query.category || "";
 
       const skip = (page - 1) * limit;
       let filter = {};
@@ -53,6 +54,9 @@ async function run() {
 
       if (brand) {
         filter.BrandName = brand;
+      }
+      if (category) {
+        filter.Category = category;
       }
 
       const allProducts = await ProductCollections.find(filter)
