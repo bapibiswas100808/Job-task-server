@@ -60,16 +60,22 @@ async function run() {
       let filter = {};
       let sort = {};
 
+      // Search by product name
       if (searchTerm) {
         filter.ProductName = { $regex: searchTerm, $options: "i" };
       }
 
+      // Search by Brand
       if (brand) {
         filter.BrandName = brand;
       }
+
+      // Searchby Category
       if (category) {
         filter.Category = category;
       }
+
+      // Sort by price range
       if (priceRange) {
         const [minPrice, maxPrice] = priceRange.split("-");
         filter.Price = {
@@ -77,19 +83,25 @@ async function run() {
           $lte: parseFloat(maxPrice),
         };
       }
+
+      // Sort by Ascending or descending Price
       if (priceSortOrder) {
         sort.Price = priceSortOrder === "asc" ? 1 : -1;
       }
+
+      // Sort By Time and Date of product update
       if (dateSortOrder) {
         sort.ProductCreationDate = dateSortOrder === "asc" ? 1 : -1;
       }
 
+      // Get all products
       const allProducts = await ProductCollections.find(filter)
         .sort(sort)
         .skip(skip)
         .limit(limit)
         .toArray();
 
+      // Count total products
       const totalProducts = await ProductCollections.countDocuments(filter);
 
       res.send({
