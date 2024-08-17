@@ -45,9 +45,12 @@ async function run() {
       const brand = req.query.brand || "";
       const category = req.query.category || "";
       const priceRange = req.query.priceRange || "";
+      const priceSortOrder = req.query.priceSortOrder || "";
+      const dateSortOrder = req.query.dateSortOrder || "";
 
       const skip = (page - 1) * limit;
       let filter = {};
+      let sort = {};
 
       if (searchTerm) {
         filter.ProductName = { $regex: searchTerm, $options: "i" };
@@ -66,7 +69,15 @@ async function run() {
           $lte: parseFloat(maxPrice),
         };
       }
+      if (priceSortOrder) {
+        sort.Price = priceSortOrder === "asc" ? 1 : -1;
+      }
+      if (dateSortOrder) {
+        sort.ProductCreationDate = dateSortOrder === "asc" ? 1 : -1;
+      }
+
       const allProducts = await ProductCollections.find(filter)
+        .sort(sort)
         .skip(skip)
         .limit(limit)
         .toArray();
