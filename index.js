@@ -42,11 +42,18 @@ async function run() {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
       const searchTerm = req.query.search || "";
+      const brand = req.query.brand || "";
 
       const skip = (page - 1) * limit;
-      const filter = searchTerm
-        ? { ProductName: { $regex: searchTerm, $options: "i" } }
-        : {};
+      let filter = {};
+
+      if (searchTerm) {
+        filter.ProductName = { $regex: searchTerm, $options: "i" };
+      }
+
+      if (brand) {
+        filter.BrandName = brand;
+      }
 
       const allProducts = await ProductCollections.find(filter)
         .skip(skip)
